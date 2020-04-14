@@ -33,12 +33,42 @@ the router.
 to instantiate the RouterHandler class, also want to export default the class. the app.js file is where the class will be instantiated. 
 within app.js, import RouterHandler and instantiate it within the constructor.  
 
-refresh page, console.log the result of executing route.page(), should get a div with the text 'stories'. 
+refresh page, console.log the result of executing route.page(), should get an html div with the text 'stories'. this is whats returned 
+because currently the Stories() function (stories.js) is returning ->  return `<div>stories</div>` 
+
+instead of returning the html, from the Stories() function, i want to display it in the browser (on page). to do this, there is a router
+outlet div on the html file, <div id="router-outlet"></div>.  i want to use this div and set its innerHTML to the html that i want to 
+display, via Stories() function. to begin, create a reusable reference to the router outlet. start this process by creating a folder called
+utils (short for utilities). within utils, make a file called view.js. the view file will manage what the user sees. to be able to update
+the view.js file, make it available to rest of app with export default and find the element with querySelector and find element with id 
+router-outlet. this will allow me to update the innerHTML of the view, therefore the page. 
+      export default document.querySelector('#router-outlet')
+
+back to stories page (stories.js), import view.js from the utils folder.  need to go out of the pages directory/folder. to do that say
+../  once out of pages directory, can go into utils directory to get file view.js:
+      import view from '../utils/view.js'
+
+instead of returning html, can view the innerHtml of the div by setting it equal to the html i want to display. refresh the page. will 
+see the text 'stories' on the page. 'stories' is the route: 
+       view.innerHTML = `<div>stories</div>`
+
+back to router.js, remove console.log(route.page()) and add the rest of routes for top, new, ask, show, favorites. all of these routes
+will be using the stories page. next step is to create routes within the routes array, which will all link to the stories page. for paths
+will be to /new, /ask, /show. 
+
+within the router callback, where i am displaying each page, by calling each function stories in each route, i can pass to it the given
+path that i am on (get current path from route.path). can receive this data within stories function from the stories.js file. within the 
+stories function parameter, can add a parameter called path. instead of just displaying the text 'stories' for each route, can interpolate
+the path that i am getting. 
+
+can then go to sto 
+
+
    
 */
 import Stories from './pages/stories.js'     //importing the Stories() function.  
 
-const router = new Navigo(null, true, '#')   //initialized router with arguments and put in variable called router.
+const router = new Navigo(null, true, '#')   //initialize router with arguments and put in variable called router.
 console.log(router) 
 
 export default class RouterHandler {      //dedicated class to create individual routes. exporting class to app.js 
@@ -48,14 +78,30 @@ export default class RouterHandler {      //dedicated class to create individual
   
   createRoutes() {                        //take an array of routes. each route consist of an object. 
     const routes = [
-      { path: '/', page: Stories }     //object has property path for root page. also property for page (info displayed when user visits)
-    ]                                  //because of function import, can now link the Stories() function here. 
-    
+      { path: '/', page: Stories },     //object has property path for root page. also property for page (info displayed when user visits)
+                                       //because of function import, can now link the Stories() function here. 
+      { path: '/new', page: Stories },
+      { path: '/ask', page: Stories },
+      { path: '/show', page: Stories } 
+
+    ]
+
+    /*code used for the root path only
     routes.forEach(route => {         //iterating over the routes array. for each route, call method router.on() 
       router.on(route.path, () => {   //pass in the path property. 2nd argument, a callback function, displays what will be on page 
          console.log(route.page())    //accesses the page property, which value is the Stories() function. Stories() function returns a div 
       }).resolve()                    //chaining on resolve(), need for async/promise management
     })
+    */
+
+  //code for when routes for new, ask, show were added. all routes will be using the stories page. 
+   routes.forEach(route => {
+    router.on(route.path, () => {
+       route.page(route.path)   //router callback displays each page by calling each function stories in each route. passing callback
+    }).resolve()               //the current path. the Stories() function can now receive this data. 
+  })
+
+
   }
 }
 
