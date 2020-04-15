@@ -61,7 +61,7 @@ path that i am on (get current path from route.path). can receive this data with
 stories function parameter, can add a parameter called path. instead of just displaying the text 'stories' for each route, can interpolate
 the path that i am getting. 
 
-can then go to sto 
+at this point, now have routes for application and ready to display stories within each page. notes continued on stories.js
 
 
    
@@ -80,7 +80,7 @@ export default class RouterHandler {      //dedicated class to create individual
     const routes = [
       { path: '/', page: Stories },     //object has property path for root page. also property for page (info displayed when user visits)
                                        //because of function import, can now link the Stories() function here. 
-      { path: '/new', page: Stories },
+      { path: '/new', page: Stories }, //Stories is a function from stories.js. Stories() will be called in the router callback
       { path: '/ask', page: Stories },
       { path: '/show', page: Stories } 
 
@@ -93,14 +93,24 @@ export default class RouterHandler {      //dedicated class to create individual
       }).resolve()                    //chaining on resolve(), need for async/promise management
     })
     */
-
-  //code for when routes for new, ask, show were added. all routes will be using the stories page. 
-   routes.forEach(route => {
-    router.on(route.path, () => {
-       route.page(route.path)   //router callback displays each page by calling each function stories in each route. passing callback
-    }).resolve()               //the current path. the Stories() function can now receive this data. 
+  
+   /* 
+  //non-destructured code for when routes for new, ask, show were added. all routes will be using the stories page. 
+   routes.forEach(route => {      //iterating over the routes array. for each route, call method router.on() 
+    router.on(route.path, () => {  //pass in the path property for 1st argument. 2nd argument, a callback, displays what will be on page 
+       route.page(route.path)   //router callback displays each page by calling stories() function in each route. passing callback
+    }).resolve()               //the current path that program is on, which comes from route.path. the Stories() function can now receive this data. 
   })
+  */
 
+  /*destructuring the route object immediately within the parameters to create more concise code. there is one parameter for the forEach() 
+  callback. to destructure it successfully, need to add a set of (). within parenthesis create a set of {}, because destructuring an object.  
+  then grab the path property and page property. can replace route.path with just path and route.page with just page. */
+  routes.forEach(({ path, page }) => {    //iterating over the routes array. for each route, call method router.on() 
+    router.on(path, () => {       //pass in the path property for 1st argument. 2nd argument, a callback, displays what will be on page
+     page(path)               //router callback displays each page by calling stories() function in each route. passing callback
+  }).resolve()     //the current path that program is on, which comes from route.path. the Stories() function can now receive this data. 
+ })
 
   }
 }
