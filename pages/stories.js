@@ -1,3 +1,4 @@
+import Story from '../components/Story.js'//going out of components directory with ../, then to components dir, Story.js
 import view from '../utils/view.js' //going out of pages directory with ../, then go to utils directory, then to view.js
 
 /*code used to check innerHtml working for the div and the paths from router callback
@@ -69,6 +70,40 @@ i have stories. if so take the stories array and iterate over it with map(). the
 if there are not stories, provide default text, no stories. 
   ${hasStories ? stories.map(story => JSON.stringify(story)) : 'No stories'}
 
+to format the stories on the page, need to create a component. components are functions that can be reused throughout the app. in this 
+case, components will help me style and add functionality to each of the stories, rather than have them be just a blob of data. the page
+directory usually consist of components. in addition to the pages directory, will also have a components directory. within components 
+directory, create file called Story.js. it is javascript convention to have the stories file in the pages directory to be lowercase. but
+for components, the files are uppercase. 
+
+instead of dumping the stories data on the page with JSON.stringify, can pass the story data to a new function within the Story
+component. go to the Story.js file, create a function called Story() which will receive a parameter called story and return a div
+with the text story. return `<div>story</div>.  make sure to make the function available to the rest of app with export default. 
+
+go back to the stories.js page (pages directory) and import Story from components/Story.js directory. then replace json.stringify with
+story() function call. 
+
+go back to Story.js and begin formatting the story by returning a div with all of the information that i need. start by making the div 
+class=story. then have a span which will tell me what number the story is. data from api not providing info on what order in the list
+each story is. to begin counting the stories at number 1, i can go back to the stories page (stories.js). i can get access to the current
+position of the array/the index of the element that i am iterating over by adding an additional parameter to the map() function. this 
+is the index parameter and i want to make it available to the function call, wherever i am creating the story. so how to do that? 
+
+i am providing the parameter story as an object. to add the index to the existing story data, i can create an inline object where i can 
+spread in all of the other story properties that i need to make available to the function with the object spread. using the index, since
+its 0 based, i can create a property on story called index and set it equal to i+1. this will give me the equivalent from counting from 1
+all the way to the end. 
+
+  prior to index
+   view.innerHTML = `<div>
+    ${hasStories ? stories.map(story => Story(story)).join('') : 'No stories'}
+  </div>` 
+
+  with additional index parameter
+  view.innerHTML = `<div>
+    ${hasStories ? stories.map((story, i) => Story({ ...story, index: i + 1 })).join('') : 'No stories'}
+  </div>`
+
 
 */
 
@@ -76,11 +111,28 @@ export default async function Stories(path) { //parameter path for the routes. r
   const stories = await getStories(path) //calling getStories() to get the return stories. await due to async function with getStories()
   //console.log(stories)                   //returns a big array of objects. and each object contains a bunch of info such ad id, title                     
   //view.innerHTML = `<div>${path}</div>`   
-  const hasStories = stories.length > 0
-                    
+  const hasStories = stories.length > 0 //determines if array has content/stories. 
+  
+  /*if hasStories is true, iterate over array and put story on page using json.stringify. replacing with story() function call (a component).  
   view.innerHTML = `<div>
-    ${hasStories ? stories.map(story => JSON.stringify(story)) : 'No stories'}
+    ${hasStories ? stories.map(story => JSON.stringify(story)) : 'No stories'} /
   </div>` 
+  */
+
+  /*putting content on page with story function call. when mapping over something, need to join the mapped content together with .join() 
+  method. this removes the commas between the content.  statement does not include index parameter
+  
+   view.innerHTML = `<div>
+    ${hasStories ? stories.map(story => Story(story)).join('') : 'No stories'}
+  </div>`
+  */
+ 
+  /*adding additional index parameter (i) to the story object. creating an inline object where i spread in all of the other story 
+  properties that i need to make available to the function with the object spread. using the index, since its 0 based, creating a 
+  property on story called index and set it equal to i+1. this will give me the equivalent from counting from 1 all the way to the end*/
+  view.innerHTML = `<div>
+    ${hasStories ? stories.map((story, i) => Story({ ...story, index: i + 1 })).join('') : 'No stories'}
+  </div>`
 }
 
 async function getStories(path) {
