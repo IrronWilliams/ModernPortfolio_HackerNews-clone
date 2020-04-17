@@ -1,5 +1,6 @@
 import Story from '../components/Story.js'//going out of components directory with ../, then to components dir, Story.js
 import view from '../utils/view.js' //going out of pages directory with ../, then go to utils directory, then to view.js
+import baseUrl from '../utils/baseUrl.js' //interpolating value in response variable
 
 /*code used to check innerHtml working for the div and the paths from router callback
 export default function Stories(path) { //adding parameter path for the routes added for new, ask, show. receives path data from router callback via router.js
@@ -143,7 +144,8 @@ async function getStories(path) {
   } else if (isNewRoute) { //extending conditional to correspond with the path newest. 
     path = '/newest' 
   }
-  const response = await fetch(`https://node-hnapi.herokuapp.com${path}`) //chain on path conditionally setting. assign to response variable 
+  //const response = await fetch(`https://node-hnapi.herokuapp.com${path}`) //chain on path conditionally setting. assign to response variable. now using baseUrl
+  const response = await fetch(`${baseUrl}${path}`) //interpolating baseUrl from utils folder. chaining on path conditionally. 
   const stories = await response.json() //resolving response with json data. awaiting promise 
   return stories 
 }
