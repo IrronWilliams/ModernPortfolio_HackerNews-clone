@@ -119,4 +119,3 @@ export default class RouterHandler {      //dedicated class to create individual
 
 
 
-//created html, css, added link to router via html, created router.js, create folder with name pages. import/export stories function

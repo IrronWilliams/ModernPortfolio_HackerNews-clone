@@ -1,4 +1,5 @@
 import Story from '../components/Story.js' //importing to use in get Item() function
+import Comment from '../components/Comment.js' //used to replace json.stringify 
 import view from '../utils/view.js' //importing view to use in Item() function
 import baseUrl from '../utils/baseUrl.js' //using in response variable
 
@@ -92,18 +93,20 @@ export default async function Item() {  //addressing block-scoping issues by cre
     commas after each comment. otherwise if there are no comments, display message no comments. 
     
     the <hr/> creates a line underneath the story. 
-    
+    initially used ${hasComments ? story.comments.map(comment => JSON.stringify(comment)).join('') : 'No comments'} to display comment. 
+    json.stringify was replaced with comments component. 
+
     */
     view.innerHTML = `
     <div>
       ${Story(story)}
     </div>
     <hr/>
-    ${hasComments ? story.comments.map(comment => JSON.stringify(comment)).join('') : 'No comments'}
+    ${hasComments ? story.comments.map(comment => Comment(comment)).join('') : 'No comments'}
     `  
   }
 
-  /*purpose of getStory() is to retrieve the story data. 1st step is to get the story id. obtaining info about the current route rom the 
+  /*purpose of getStory() is to retrieve the story data. 1st step is to get the story id. obtaining info about the current route from the 
   window.location property. the location property is an object with a bunch of data, including the hash(#) property. the routes begin 
   with a #. console.log(window.location.hash) returns the remainder of the url -> #/item?id=21702424. i can use the hash info string to  
   split where i see the text id. can use the split() method. split() operates on a string and returns an array. pass in argument where 
@@ -125,7 +128,7 @@ export default async function Item() {  //addressing block-scoping issues by cre
   async function getStory() {
     const storyId = window.location.hash.split('?id=')[1] //accessing the second element in array
     //const response = await fetch(`https://node-hnapi.herokuapp.com/item/${storyId}`) //concatenate the string with storyId. replaced by using baseUrl
-    const response = await fetch(`${baseUrl}/item/${storyId}`)
+    const response = await fetch(`${baseUrl}/item/${storyId}`) //concatenate the string with storyId
     const story = await response.json() 
     console.log(story) 
     return story
