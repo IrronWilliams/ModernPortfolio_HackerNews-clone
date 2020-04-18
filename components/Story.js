@@ -150,13 +150,32 @@ file (.nested-comments-0, .nested-comments-2). to make the comments more promine
 update the div with to dynamically change the inset based upon the comment level:
   <div class="nested-comments-${comment.level}">
 
-can now see much more clearly the threads within the story. 
+can now see much more clearly the threads within the story or in response to the story. this is the power of using recursion to be able 
+to display comments according to the condition set up in the ternary. recursion allows me to continue iterating with the comment function 
+itself by calling itself inside itself. 
 
-has functionality for different 
-recursion will allow me to generate all of the nested comments. 
+now going to add active links to the header. so that when user is on a given page, user can see the route user is on. for example, when 
+on the home page, want to have the Top link to have active class applied to it that will supply an underline. this will give users a clear
+visualization where they are within the app. to accomplish this, go to app.js. within app.js want to figure out a way to apply the active
+class to a link that is active that corresponds to the route user is currently on and when the route changes. fortunately, from the window
+we get access to a special property that allows me to assign a callback function, and this is window.onhashchange = () => {}.
 
+whenever i have a hash router (#), whenever using a # in the url that changes, can detect the change with the onhashchange property. 
+the following will console log the word change when user goes from 1 route to another. 
+  window.onhashchange = () => {
+    console.log('changed') 
+  }
 
-simaliar to checking if there are stories or comments within pages, 
+the goal is to apply an active class, which is a class from the css file (.active which contains details for a solid white border-bottom) 
+so add the border to header when user is on a route that corresponds to a link. to write the logic for this, create a dedicated function
+called setActiveLink() and set it directly above the class App. the setActiveLink() will be called within the window.onhashchange arrow 
+function. referencing the html file, each of the links in the header have a class=header-link. <a href="#/" class="header-link">Top</a>.
+a good approach will be to find all of these links according to the header-link class. back to app.js, i use document.querySelectAll()
+to find the class header-link and put in a variable called links. the links will be returned in a nodelist. can then iterate over the 
+nodelist, and for each link can get the href that the link is pointing to (ie, href=#/ask) and can get this by getting the href attribute, 
+using getAttribute() and can put in a variable called linkPath. -> const linkPath = link.getAttribute('href'). this will provide the href
+that the link is pointing to. can get the current path from window.location.hash. -> const currentPath = window.location.hash. can now 
+compare the 2 variables. if the currentPath === linkPath then can add the active class. otherwise/if not equal, remove the active class. 
 
 */
 
