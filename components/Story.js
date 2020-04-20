@@ -176,8 +176,44 @@ nodelist, and for each link can get the href that the link is pointing to (ie, h
 using getAttribute() and can put in a variable called linkPath. -> const linkPath = link.getAttribute('href'). this will provide the href
 that the link is pointing to. can get the current path from window.location.hash. -> const currentPath = window.location.hash. can now 
 compare the 2 variables. if the currentPath === linkPath then can add the active class. otherwise/if not equal, remove the active class. 
+this process results in a visual way to display to user where they are/which route they are in within the app. 
+
+now want to work on favorites which will allow users to select one these stories by clicking on the 'add to favorites' span. need to find 
+a away across all of the pages to share the state to:
+  1. click on 'add to favorites' span (the story) added to state/collected somewhere
+  2. want to read the 'favorite' story within any of the pages to be able to see that something has already been added to state
+  3. if story has been added to favorites, want to display to users option to remove favorites, basically enable user to toggle favorites
+
+to begin, create a file called store.js. will refer to the global state of the app as a store. in the store, will collect all of the 
+favorited stories and hold on to them in the global state, meaning to be used across all the pages (top, new, ask, show). the goal
+is to store all of the global state in whats know as a store. this is a concepts shared across many state management libraries for 
+serious javascript frameworks like react, angular and vue. a common global data storage is called a store. in program i will be using a 
+pattern that is shared across among major state management libraries such as redux and ngrx. so how will the store do both essential 
+aspects of working with state which is getting state and setting state. this an be accomplished with the use of a reducer. a reducer is 
+a basic javascript function and want to name the reducer to the type of state that i am managing. since managing the favorite state, will
+call the reducer favoritesReducer().  the reducer takes 2 parameters, the previous state and an action to determine what to do with the 
+state. use a switch() statement to determine what to do. we switch according to the action.type. initially will have 2 cases, add_favorite
+and remove_favorite. need to also add a default case that returns the prior state, in the event neither cases are matched. 
+each action, consists of an object with a type that has a sting in all caps. 1st action will be to add_favorite story:
+
+  function favoritesReducer(state, action) {
+   switch (action.type) {
+      case "ADD_FAVORITE":
+      case "REMOVE_FAVORITE": 
+      default:
+        return state
+   } 
+}
+const action = { type: "ADD_FAVORITE" }
+
+so how do i update the user's favorites?  first think about the initial state. how am i going to collect all of the favorites? the best 
+way to manage this is with an array. begin by creating the initial state with an empty object assigned to variable initial state. the 
+state managed by reducers are almost always objects in serious applications. for the state, will have one property called favorites set 
+to an empty array. 
+
 
 */
+
 
 
 export default function Story(story) { //exporting to stories.js  
