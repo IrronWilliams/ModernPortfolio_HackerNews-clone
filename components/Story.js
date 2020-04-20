@@ -209,7 +209,60 @@ const action = { type: "ADD_FAVORITE" }
 so how do i update the user's favorites?  first think about the initial state. how am i going to collect all of the favorites? the best 
 way to manage this is with an array. begin by creating the initial state with an empty object assigned to variable initial state. the 
 state managed by reducers are almost always objects in serious applications. for the state, will have one property called favorites set 
-to an empty array. 
+to an empty array. to add a favorite, or anything with help of an action, in addition to action type also need a payload. the payload 
+will provide data. want to provide the payload as an object. a good name for a property to put on the payload is favorite and the 
+favorite property will consist of the object with all the data that i know is associated with the story. at this time provide a dummy 
+story to favorite called story1. this is a sample action to test things out. 
+  const action = { type: "ADD_FAVORITE", payload: { favorite: "story1" } }
+
+how do i use this action to add a favorite? 1st think about how i will get access to the data. will obtain access when i call the 
+function action (provided as parameter to function favoritesReducer) and get favorite from action.payload.favorite, put in variable 
+called addedFavorite. i want to combine the results of addedFavorite to the previous favorites values. to combine results by creating
+a new favorites array and copy in with the spread operator the previous state values from state.favorite. a common pattern to make sure
+the states always have the properties that i need is to set the initial state object as the default parameter. so even if the state is 
+not provided as a parameter to function favoritesReducer(), it will use the fallback of default parameter of the empty favorites array. 
+so spread in state.favorites and provide addedFavorite as the final element -> const favorites = [...state.favorites, addedFavorite]. 
+then return the state within an objects favorites ->  return { favorites } (returns object with favorites as property and value)
+
+to remove an item from the array, can use the id property from the favorite. begin by gaining access to data with action.payload.favorite
+and putting results in a variable called removedFavorite. instead of using the spread operator, want to use filter method(). take 
+action.payload.favorite and iterate over each favorite, check the id and make sure its not equal to the id getting from removedFavorite. 
+this will return a new favorites array and put results in a variable called favorites. then return the state as an object with 
+favorites as property and value: 
+  const favorites = state.favorites.filter(favorite => favorite.id !== removedFavorite.id)
+  return { favorites }
+
+the reducer has been created. but also need a store. need a store because the reducer does not provide a way for me to conveniently get 
+the state as well as dispatch the actions (add_favorite, removed_favorite).  a way to do this is with help of a function called createStore. 
+this is at the heart of any state management library such as redux. the createStore() function will accept the reducer. (therefore will be
+creating a higher order function). the way to get the state from favoritesReducer() is to take the reducer and pass in an undefined 
+variable. that means the initialState (provided by object containing property for an empty array) will be applied when the 1st argument 
+is undefined. the 2nd argument requires an action. since there is no action when 1st calling reducer, the 2nd argument will be an empty 
+object, so will return the default state (from favoritesReducer). put hte results in a variable called currentState. the 1st time the 
+createStore() function runs, will get the initialState. then from createStore(), return a object (method written as an arrow function) 
+with a property called getState. getState is a method on the object im returning. the getState arrow function will give me the 
+currentState that has been calculated. 2nd property is called dispatch, also a method that will be an arrow function. dispatch will 
+take the provided action and pass on the action to the reducer. so take the reducer that was passed in createStore(). reducer() will take 
+the currentState (which is the previous state) and the action that just came in and then update the currentState with the new value:
+  currentState = reducer(currentState, action)
+
+in order for the createStore() function to work, need to provide it the favoritesReducer() function. to accomplish this, create another 
+function called createStore where i can pass in favoritesReducer(). whats returned is an object (from the return statement in createStore).
+assign object to a variable called store. then make the store available to the rest of the application by export default store. the store
+variable will provide the object returned in createStore(), will allow getState to read from state and allow to dispatch an action and 
+therefore update state wherever needed in application. with both functions getState() and dispatch(). will allow getState()
+
+now the store has been created, can use a dispatch function and provide an action. 
+  store.dispatch(action)
+
+to get the state after its been updated, can call store.getState
+  console.log(store.getState())
+
+to see results can temporary, import store into app.js
+
+
+
+
 
 
 */

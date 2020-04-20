@@ -15,6 +15,7 @@ otherwise/if not equal, remove the active class. this provides visual way to dis
 within the app. */
 
 import RouterHandler from './router.js'  //importing RouteHandler class
+import './store.js'   //temporary importing store for testing. 
 
 /*whenever i have a hash router (#), whenever using a # in the url that changes, can detect the change with the onhashchange property. 
 the following will console log the word change when user goes from 1 route to another. */
