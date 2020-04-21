@@ -258,12 +258,85 @@ now the store has been created, can use a dispatch function and provide an actio
 to get the state after its been updated, can call store.getState
   console.log(store.getState())
 
-to see results can temporary, import store into app.js
+to see results can temporary, import store into app.js.  
+
+now i can work with store, get and update state, i can now add and remove favorites across the pages. i can create the store with the 
+favoritesReducer. next step is to go to stories.js because this page is where i am providing all of the data for the individual stories 
+and passing them to the stories component. in the view.innerHtml, want to provide an additional piece of data for each story that 
+determines whether its been favorited or not. to accomplish this, 1st need access to the store. within stories page, import the store.  
+withing stories page, need to determine if a given story is within the favorites array in the global state. to do this, go to Stories()
+function. in addition to getting stories from api endpoint, also want to get favorites. to get favorites can use the getState method that
+the store object is providing (from store.js, store object is const store). at the beginning of Stories() can call store.getState() and
+put in variable called state -> const state = store.getState(). since the state object is small, just consisting of favorites array, can
+destructure the favorites property -> const { favorites } = store.getState().  
+
+also need to find a way to check when iterating over the stories elements/objects, check if a story is already in the favorites array 
+in the global state. will need 2 pieces of info for this. will need the array of favorites and the individual story. this can be 
+accomplished with a dedicated function which will be added to the utils folder. within utils folder, create a file called checkFavorite 
+and create a function declaration called checkFavorite() that will receive
+the favorites array and an individual story. the array method to use to figure out whether a given object exists within an array of objects
+is the some() method. the some() method will check if a condition is true and immediately return true if the condition is met or false if
+it iterates thru the whole array and the condition is not met. take the favorites array, use some() on it, some() will iterate over every
+favorite and we want to see if the favorite.id property is equal to the story.id. if this is the case then the story on the page will be
+in the favorites array. want to return the true/false value immediately -> return favorites.some(favorite => favorite.id === story.id).
+make sure to export file so that its accessible. stories.js will import. 
+
+back to stories.js and import checkFavorites.js. since stories.js now has access to checkFavorites(), can use directly in the html markup
+where i am iterating over each stories array with map. can update the html markup (view.innerHtml) by adding another property to each story
+called isFavorite. the isFavorite property will take the results of checkFavorite() which will accept the favorites array from state and the
+individual story i am iterating over. 
+
+back to story.js. i want to conditionally change the text based on the isFavorite property. the way to do this is to use a ternary. if 
+story.isFavorite is true (meaning user has already favorited it), tell user he/she can remove from favorites, otherwise if user has not 
+favorited the story, they can add it to their array. this goes in the class=favorite span. 
+  {story.isFavorite ? "Remove From Favorites" : "Add To Favorites"}
+
+now need a way to actually add an item to favorites and once its added, remove from favorites. i can do this by registering a click event. 
+the click event will handle a click event for each of the individual favorite spans. within story.js there is a span with a class=favorite. 
+every story will have this particular span. i want to get all of these spans and add click events to all of them. the most convenient way 
+is to do this within the stories page. go back to stories.js and at the bottom of the stories() function, use document.querySelectorAll()
+and select everything with the class favorite, forEach favorite button, want to add a click event. then on it want to get the event. within
+callback need to figure out a way to get the story data. can use a different technique by putting objects on each of the stories. go to
+story.js, and on the span with class=favorite, can add a data attribute called story. can put the entire story on this attribute by 
+interpolating the expression json.stringify and stringify the entire story object: 
+  <span class="favorite" data-story='${JSON.stringify(story)}'>
+
+back within stories.js, can now easily grab the story by turning the callback to a function declaration and by referring to the favorite
+element itself by saying this.dataset.story. since have this as a json string, can use the opposite operation json.parse() to turn back
+into an object and put in a variable called story. now there will be a story when user clicks on one of the spans. can now check to see 
+if the the story is in the favorites array, pass in favorites and story. this will determine what action needs to be provided. put the 
+results in a variable called isFavorited. then add a conditional to say if user already favorited, remove story. can use the dispatch 
+function from store.js for this. store.dispatch takes an action and can write action object where type = remove_favorite. the payload will
+be an object with a property on it called favorite set to story. the else statement will add_favorite. at the end want to recall stories 
+function to display the new data and set view.Html. do this by awaiting stories() and provide path. 
+
+document.querySelectorAll('.favorite').forEach(favoriteButton => {
+     favoriteButton.addEventListener('click', async function() {
+       const story = JSON.parse(this.dataset.story);  
+       const isFavorited = checkFavorite(favorites, story);
+       if (isFavorited) {
+         store.dispatch({ type: "REMOVE_FAVORITE", payload: { favorite: story } })  
+       } else {
+         store.dispatch({ type: "ADD_FAVORITE", payload: { favorite: story } })    
+       }
+       await Stories(path);
+     }); 
+  });
 
 
+in click event, repeating store.dispatch in the conditional. the only thing that im changing is the type. can use a ternary within the 
+object to make code more concise. since i am dispatching an action regardless and the type property will resolve to a certain value, can
+use a ternary to say if story has been favorited, then provide the type remove_favorite otherwise add_favorite. can still toggle favorites
+just like before. 
 
-
-
+document.querySelectorAll('.favorite').forEach(favoriteButton => {
+     favoriteButton.addEventListener('click', async function() {
+       const story = JSON.parse(this.dataset.story);  
+       const isFavorited = checkFavorite(favorites, story);
+       store.dispatch({ type: isFavorited ? "REMOVE_FAVORITE" : "ADD_FAVORITE", payload: { favorite: story } })  
+       await Stories(path);
+     }); 
+  });
 
 */
 
@@ -275,6 +348,15 @@ export default function Story(story) { //exporting to stories.js
     //original span class="gray">${story.index}</span>  -> with item page, need to account for the added did not account for index property otherwise my error out or get undefined text on page. 
     //original span updated with ternary  = <span class="gray">${story.index ? story.index : ""}</span>, 
     //replaced repetition with short circuiting <span class="gray">${story.index || ""}</span>. either have story.index or use empty string
+    
+    /*using ternary to conditionally change text based on isFavorite property. if story.isFavorite is true (user has already favorited), 
+    tell user he/she can remove from favorites, otherwise if user has not favorited the story, they can add it to their array. replacing
+    Add To Favorites (line following the heart image) with the ternary.
+    
+    updated class=favorite span by adding a data attribute called story. putting entire story on the data attribute by interpolating
+    the expression json.stringify and stringify the entire story object. prior to update span was -> <span class="favorite">.
+    this will work with the click event associated with stories.js. 
+    */
     return `
     <div class="story">
       <div> 
@@ -291,9 +373,9 @@ export default function Story(story) { //exporting to stories.js
             ${story.comments_count} comments
           </a>
           |
-          <span class="favorite">
+          <span class="favorite" data-story='${JSON.stringify(story)}'>
             <img class="heart" src="https://icon.now.sh/heart/ccc">
-            Add To Favorites
+            ${story.isFavorite ? "Remove From Favorites" : "Add To Favorites"}
           </span>
         </div>
       </div>

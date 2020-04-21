@@ -1,6 +1,8 @@
 import Story from '../components/Story.js'//going out of components directory with ../, then to components dir, Story.js
 import view from '../utils/view.js' //going out of pages directory with ../, then go to utils directory, then to view.js
 import baseUrl from '../utils/baseUrl.js' //interpolating value in response variable
+import checkFavorite from '../utils/checkFavorite.js' //importing to see if checked favorites are in favorites array. 
+import store from '../store.js' //importing for adding/removing favorites
 
 /*code used to check innerHtml working for the div and the paths from router callback
 export default function Stories(path) { //adding parameter path for the routes added for new, ask, show. receives path data from router callback via router.js
@@ -108,7 +110,10 @@ all the way to the end.
 
 */
 
-export default async function Stories(path) { //parameter path for the routes. receives path data from router callback via router.js 
+export default async function Stories(path) { //parameter path for the routes. receives path data from router callback via router.js
+  //const state = store.getState() //used for favorites. statement not destructured. calling reducer to determine if a given story is within the favorites array in the global state
+  const { favorites } = store.getState() //destructuring favorites property. calling reducer to determine if a given story is within the favorites array in the global state 
+  console.log(favorites) //checking add/remove favorites functionality. favorited story will be added to array and removed from array 
   const stories = await getStories(path) //calling getStories() to get the return stories. await due to async function with getStories()
   //console.log(stories)                   //returns a big array of objects. and each object contains a bunch of info such ad id, title                     
   //view.innerHTML = `<div>${path}</div>`   
@@ -130,11 +135,49 @@ export default async function Stories(path) { //parameter path for the routes. r
  
   /*adding additional index parameter (i) to the story object. creating an inline object where i spread in all of the other story 
   properties that i need to make available to the function with the object spread. using the index, since its 0 based, creating a 
-  property on story called index and set it equal to i+1. this will give me the equivalent from counting from 1 all the way to the end*/
+  property on story called index and set it equal to i+1. this will give me the equivalent from counting from 1 all the way to the end.
+  
+  for the 'add to favorites' functionality, imported checkFavorites. can now use directly in the html markup where i am iterating over 
+  each stories array with map. updating the html markup by adding another property to each story called isFavorite. the isFavorite 
+  property will take the results of checkFavorite() which will accept the favorites array from state and the individual story i am 
+  iterating over.  this was markup prior to update:
+
   view.innerHTML = `<div>
     ${hasStories ? stories.map((story, i) => Story({ ...story, index: i + 1 })).join('') : 'No stories'}
   </div>`
+  
+  */
+ view.innerHTML = `<div>
+    ${hasStories ? stories.map((story, i) => 
+    Story({ ...story, index: i + 1, isFavorite: checkFavorite(favorites, story) })).join('') : 'No stories'}
+    </div>`
+
+  /*registering a click event that will handle event for each of the individual favorite spans. getting all spans where class=favorite and 
+  adding click events to all of them. 
+  updated span on story.js by adding a data attribute. can now grab the story.  */
+  document.querySelectorAll('.favorite').forEach(favoriteButton => {  //add event listener for each span 
+    favoriteButton.addEventListener('click', async function() {
+      const story = JSON.parse(this.dataset.story) //grabbing story by referring to the favorite element. reversing json and turning back into object 
+      const isFavorited = checkFavorite(favorites, story) //calling checkFavorite and passing favorites array and story. will determine what action needs to be taken
+      if (isFavorited) {  //if story is already in favorites remove story from array. 
+        store.dispatch({ type: "REMOVE_FAVORITE", payload: { favorite: story } })  
+      } else {
+        store.dispatch({ type: "ADD_FAVORITE", payload: { favorite: story } })    
+      }
+      //store.dispatch({ type: isFavorited ? "REMOVE_FAVORITE" : "ADD_FAVORITE", payload: { favorite: story } }) //more concise code with ternary
+      await Stories(path) //recall stories function to display the new data and set view.innerHtml.  
+    })  
+  }) 
+
 }
+
+    
+
+  
+  
+
+      
+
 
 async function getStories(path) {
   const isHomeRoute = path === '/'    //checking if on the home route 

@@ -95,6 +95,6 @@ function createStore(reducer) { //function accepts the reducer which takes 2 par
  const action = { type: "ADD_FAVORITE", payload: { favorite: { title: "story1", id: 1 } } } 
  
  const store = createStore(favoritesReducer) //passing favoritesReducer() in order to get createStore() to work 
- store.dispatch(action) //dispatch is an arrow function and accepts a parameter, passing action as argument.  
- console.log(store.getState()) 
+ //store.dispatch(action) //dispatch is an arrow function and accepts a parameter, passing action as argument.  
+ //console.log(store.getState()) 
  export default store   //making store available to rest of application. app.js will import store 
