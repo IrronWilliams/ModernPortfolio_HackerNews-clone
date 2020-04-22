@@ -68,6 +68,7 @@ at this point, now have routes for application and ready to display stories with
 */
 import Stories from './pages/stories.js'     //importing the Stories() function. 
 import Item from './pages/item.js'
+import Favorites from './pages/favorites.js'
 
 const router = new Navigo(null, true, '#')   //initialize router with arguments and put in variable called router.
 console.log(router) 
@@ -84,7 +85,8 @@ export default class RouterHandler {      //dedicated class to create individual
       { path: '/new', page: Stories }, //Stories is a function from stories.js. Stories() will be called in the router callback
       { path: '/ask', page: Stories },
       { path: '/show', page: Stories },
-      { path: '/item', page: Item } 
+      { path: '/item', page: Item },
+      { path: '/favorites', page: Favorites } 
 
     ]
 

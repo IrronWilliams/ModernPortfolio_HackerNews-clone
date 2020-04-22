@@ -165,7 +165,7 @@ export default async function Stories(path) { //parameter path for the routes. r
         store.dispatch({ type: "ADD_FAVORITE", payload: { favorite: story } })    
       }
       //store.dispatch({ type: isFavorited ? "REMOVE_FAVORITE" : "ADD_FAVORITE", payload: { favorite: story } }) //more concise code with ternary
-      await Stories(path) //recall stories function to display the new data and set view.innerHtml.  
+      await Stories(path) //recall stories function to display the new data and set view.Html. do this by awaiting stories() and provide path. 
     })  
   }) 
 

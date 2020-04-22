@@ -338,6 +338,64 @@ document.querySelectorAll('.favorite').forEach(favoriteButton => {
      }); 
   });
 
+at this point in app, i have completed the following:
+  seen how to work with global state
+  worked with store 
+  know how to get state within stories page 
+  used favorites array
+  checked to see if a given story has been favorited and passed it down to the story component to conditionally set text based upon state 
+  registered a click event for each of the favorite span to be able to toggle favorites into state or remove them from state. 
+
+to build last part of app, need to create the favorites page. on favorites page, want to list all of the favorites user has stored in state
+at any given point in time. if there are no favorites stored in state, display 'add some favorites'. want to display each favorite as an 
+individual story using story component. the favorites page brings together all of the concepts utilized to bring the app to this point. 
+the following steps taken to create favorites page.  
+
+1. 1st step will be to declare a new route in router.js. the path will be /favorites (because the header link on index.html has /favorites)
+  <a href="#/favorites" class="header-link">Favorites</a>
+the page property will be the result of the favorites() function created in step 2. 
+
+
+2. create a favorites page (put in pages directory). create a basic function called favorites(). since im creating a page, i want to set
+a view. to do this, i want to import the view reference from the utils folder. within function, for testing purposes, set a view.innerHtml
+that's a div which has the text favorites -> view.innerHtml = <div>Favorites</div>. make sure to export default function and provide this 
+function to the router by going to router.js and importing favorites into the router.js file. now favorites has been imported, now have access
+to the function. can now complete the route for /favorites by adding the favorites() function as the page property. can now refresh the 
+page. what seen on the favorites page is the text 'favorites' that was returned from the favorites() function view.innerHtml div.   
+
+3. within favorites, i want to read from the store to get the state in order to display favorites. import store from store.js. within 
+favorites() function, use the getState() method off of store and destructured the favorites property off of the state object. 
+(applied same approach with the Stories() function from stories). next step is to check to see if an array is empty or not by checking 
+the length of array and store results in a variable called hasFavorites. update the html text from div from 'Favorites' to default text
+that tells user to add favorites if there are not any favorites in the array. to address the default text, add a ternary within the div.
+the ternary will evaluate if there are favorites, if so map over them, otherwise tell user to 'add some favorites'. to map over elements, 
+want to call elements story because i want to display them with the story component. within map(), i have an arrow function and within 
+arrow function i am going to call the story() function from stories.js. when i call story() i want to spread in all of the previous story 
+properties and also want to provide the isFavorite value. the isFavorite value will determine to either show the text 'remove from favorites' 
+or 'add to favorites'. isFavorite ensure the text is in sync with the global state. this was accomplished in stories.js by using the 
+checkFavorite() helper utility function. 
+
+after spreading in previous story properties, also create the isFavorite property and setting it to the return value of the checkFavorite()
+function call. make sure to use join() method to join together the string:
+  view.innerHTML = `<div>
+    ${hasFavorites ? favorites.map(story => Story({
+        ...story,
+        isFavorite: checkFavorite(favorites, story)
+    })).join('') : "Add some favorites!"}
+  </div>` 
+
+need to import story from story.js and checkFavorite from utils folder. refresh page, save a story and see story on favorites page. 
+
+with the 
+  
+  
+
+once story and checkFavorite has been imported into favorites.js, am going to call story 
+  
+
+
+
+
 */
 
 
