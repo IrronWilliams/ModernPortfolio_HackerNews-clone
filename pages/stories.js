@@ -106,8 +106,6 @@ all the way to the end.
   view.innerHTML = `<div>
     ${hasStories ? stories.map((story, i) => Story({ ...story, index: i + 1 })).join('') : 'No stories'}
   </div>`
-
-
 */
 
 export default async function Stories(path) { //parameter path for the routes. receives path data from router callback via router.js
@@ -170,15 +168,7 @@ export default async function Stories(path) { //parameter path for the routes. r
   }) 
 
 }
-
-    
-
-  
-  
-
       
-
-
 async function getStories(path) {
   const isHomeRoute = path === '/'    //checking if on the home route 
   const isNewRoute = path === '/new' //checking if path router = '/new'. if true, then path = newest (endpoint on api)

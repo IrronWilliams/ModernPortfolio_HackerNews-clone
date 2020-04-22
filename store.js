@@ -58,8 +58,6 @@ needed in application. make the store available to the rest of the application b
 
 */
 
-
-
 function createStore(reducer) { //function accepts the reducer which takes 2 parameters (state, action)
     let currentState = reducer(undefined, {}) //take the reducer and pass in an undefined variable. because undefined, initialState applied
                                               //no action when 1st calling reducer, returns the default state from favoritesReducer() switch cases

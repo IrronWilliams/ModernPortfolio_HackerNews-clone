@@ -384,21 +384,35 @@ function call. make sure to use join() method to join together the string:
     })).join('') : "Add some favorites!"}
   </div>` 
 
-need to import story from story.js and checkFavorite from utils folder. refresh page, save a story and see story on favorites page. 
+remember to import story from story.js and checkFavorite from utils folder. refresh page, click 'add to favorites', check favorites page
+and see 'favorited' story on page. 
 
-with the 
-  
-  
+4. on favorites page, nothing will happen when user clicks on 'remove from favorites'.  need to set up event listeners for this. go to 
+stories.js and copy the code for the event listener into favorites.js. 
 
-once story and checkFavorite has been imported into favorites.js, am going to call story 
-  
+    document.querySelectorAll('.favorite').forEach(favoriteButton => {
+     favoriteButton.addEventListener('click', async function() {
+       const story = JSON.parse(this.dataset.story);  
+       const isFavorited = checkFavorite(favorites, story);
+       store.dispatch({ type: isFavorited ? "REMOVE_FAVORITE" : "ADD_FAVORITE", payload: { favorite: story } })  
+       await Stories(path);
+     }); 
+  });
+}
 
+a simple copy/paste will not work. this will not work because code is trying to call Stories() function instead of favorites() to be able 
+to re-render. do not need to make the event listener async because there is not an async function for favorites(). need to adjust the code 
+slightly by calling favorites(). when calling favorites(), do not need to pass in a path because favorites() function was not provided any
+path arguments. the last line of code is calling favorites() to re-render after story has been added or removed from state. now on the 
+favorites page, when user clicks on 'remove from favorites', the story will be removed from the favorites page. 
 
+Self CONGRATS!!! this was no small feat! i've created an entire hacker news clone utilizing some of the most important concepts of the 
+javascript language. particularly advanced and complex concepts including async javascript as well as essential concepts for moving on 
+to frameworks such as state management, working with reducers and the global store. 
 
+notes for project are on story.js, stories.js, comments.js, app.js, router.js
 
 */
-
-
 
 export default function Story(story) { //exporting to stories.js  
     //console.log(story)
