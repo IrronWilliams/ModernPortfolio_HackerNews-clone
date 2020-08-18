@@ -1,19 +1,3 @@
-/*ADDING PAGES 
-
-creating pages that correspond to different paths is difficult in normal javascript. will rely upon a 3rd party library to obtain this 
-functionality. specifically bring in a 3rd party package that will allow me to us a router with a simple interface to create routes that
-correspond with each of the links (top, new, ask, show, favorites) in effort to navigate around the app. add external script on html file.
-place the link to the library navigo underneath the script linking to the javascript file. will use a cdn to link to the library. 
-will need to create a router to use this package. begin by creating a new js file called router.js.  
-
-the setActiveLink() function adds a white line to the header when user is on a route that corresponds to a link. per html file, each of
-the links in the header have a class=header-link. (  <a href="#/" class="header-link">Top</a>  ). using document.querySelectAll()
-to find all of the links with the header-link class. the links will be returned in a nodelist. iterate over the nodelist, and for each 
-link get the href that the link is pointing to (ie, href=#/ask) using getAttribute() and put in a variable called linkPath. 
-get the current path from window.location.hash. compare the 2 variables. if the currentPath === linkPath then can add the active class. 
-otherwise/if not equal, remove the active class. this provides visual way to display to user where they are/which route they are in
-within the app. */
-
 import RouterHandler from './router.js'  //importing RouteHandler class
 //import './store.js'   //temporary importing store for testing. 
 
